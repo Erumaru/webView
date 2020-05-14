@@ -1,5 +1,5 @@
 //
-//  SexyWebView.swift
+//  WebView.swift
 //  WebView
 //
 //  Created by erumaru on 5/11/20.
@@ -10,50 +10,51 @@ import Foundation
 import WebKit
 
 protocol WebViewDelegate: class {
-    func didReceive(webView: WebView, event: WebViewEvents, with body: [String: Any])
+    func didReceive(webView: WebView, event: WebViewEvent, with body: [String: Any])
     func onBackPressed(webView: WebView)
     func shouldAuthorize(webView: WebView)
 }
 
 extension WebViewDelegate {
-    func didReceive(webView: WebView, event: WebViewEvents, with body: [String: Any]) {}
+    func didReceive(webView: WebView, event: WebViewEvent, with body: [String: Any]) {}
     func onBackPressed(webView: WebView) {}
     func shouldAuthorize(webView: WebView) {}
 }
 
-private enum WebViewInternalEvents: String {
+private enum WebViewInternalEvent: String {
     case navBar = "nav_bar"
     case authorization
 }
 
-enum WebViewEvents: String {
+enum WebViewEvent: String {
     case filter
 }
 
 class WebView: WKWebView {
-    // MARK: - Variables
+    /**
+        **NOTE**
+        Scripts to remove some web features.
+     */
     private let _scripts = [
+        /// remove text selection
         "document.documentElement.style.webkitUserSelect='none';",
+        /// remove long press callout
         "document.documentElement.style.webkitTouchCallout='none';",
+        /// remove double click zoom
         "var meta = document.createElement('meta'); meta.name = 'viewport'; meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'; var head = document.getElementsByTagName('head')[0]; head.appendChild(meta);"
     ]
+    
     weak var delegate: WebViewDelegate?
     
-    // MARK: - Lifecycle
-    init(url: URL, message handler: WebViewMessageHandler = .init()) {
-        let controller = WKUserContentController()
-        self._scripts.forEach {
-            controller.addUserScript(.init(source: $0,
-                                           injectionTime: .atDocumentEnd,
-                                           forMainFrameOnly: true))
-        }
-        controller.add(handler, name: handler.name)
+    private var _messageHandler: WebViewMessageHandler = .init()
+    
+    init(url: URL) {
         let configurations = WKWebViewConfiguration()
-        configurations.userContentController = controller
+        configurations.userContentController = .init()
         
         super.init(frame: .zero, configuration: configurations)
-        
-        handler.delegate = self
+    
+        self.configureUserContentController()
         self.configureScrollView()
         
         self.load(.init(url: url))
@@ -63,11 +64,21 @@ class WebView: WKWebView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Methods
+    deinit {
+        self.configuration.userContentController.removeScriptMessageHandler(forName: self._messageHandler.name)
+    }
+    
+    private func configureUserContentController() {
+        self._scripts.forEach {
+            self.configuration.userContentController.addUserScript(.init(source: $0,
+                                           injectionTime: .atDocumentEnd,
+                                           forMainFrameOnly: true))
+        }
+        self.configuration.userContentController.add(self._messageHandler, name: self._messageHandler.name)
+        self._messageHandler.delegate = self
+    }
+    
     private func configureScrollView() {
-        /*
-            Make web view act more native.
-         */
         scrollView.clipsToBounds = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -88,10 +99,11 @@ class WebView: WKWebView {
                                                  .expires: "NO"])
         else {
             assertionFailure("CAN'T ADD COOKIE")
-            /*
-             This initializer returns nil if the provided properties are invalid.
-             To successfully create a cookie, you must provide values for (at least)
-             the path, name, and value keys, and either the originURL key or the domain key.
+            /**
+                **WARNING**
+                This initializer returns nil if the provided properties are invalid.
+                To successfully create a cookie, you must provide values for (at least)
+                the path, name, and value keys, and either the originURL key or the domain key.
              */
             return
         }
@@ -100,6 +112,7 @@ class WebView: WKWebView {
     
     func addCookies(_ cookies: [String : String], completion: @escaping () -> ()) {
         let group = DispatchGroup()
+        
         cookies.forEach {
             group.enter()
             self.addCookie($0, value: $1) {
@@ -116,10 +129,14 @@ class WebView: WKWebView {
 extension WebView: WebViewMessageHandlerDelegate {
     func didReceive(message name: String, body: [String : Any]) {
         guard
-            let event = WebViewEvents(rawValue: name)
+            let event = WebViewEvent(rawValue: name)
         else {
-            guard let internalEvent = WebViewInternalEvents(rawValue: name) else {
+            guard let internalEvent = WebViewInternalEvent(rawValue: name) else {
                 assertionFailure("UNKNOWN WEBVIEW EVENT: \(name)")
+                /**
+                   **WARNING**
+                   You must add implement internal event flow or add WebViewEvent case.
+                */
                 return
             }
             

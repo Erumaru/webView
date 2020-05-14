@@ -35,7 +35,7 @@ extension ViewController: WebViewDelegate {
         print("back")
     }
     
-    func didReceive(webView: WebView, event: WebViewEvents, with body: [String : Any]) {
+    func didReceive(webView: WebView, event: WebViewEvent, with body: [String : Any]) {
         print("\(event.rawValue) \(body)")
         switch event {
         default: break

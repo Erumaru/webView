@@ -14,11 +14,10 @@ protocol WebViewMessageHandlerDelegate: class {
 }
 
 class WebViewMessageHandler: NSObject, WKScriptMessageHandler {
-    // MARK: - Variables
     let name = "iosCallbackHandler"
+    
     weak var delegate: WebViewMessageHandlerDelegate?
     
-    // MARK: - Methods
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == self.name,
