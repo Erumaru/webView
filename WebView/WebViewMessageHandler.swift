@@ -2,30 +2,36 @@
 //  WebViewMessageHandler.swift
 //  WebView
 //
-//  Created by erumaru on 5/11/20.
-//  Copyright © 2020 kbtu. All rights reserved.
+//  Created by Abzal Kobenov on 5/11/20.
+//  Copyright © 2020 Azimut Labs. All rights reserved.
 //
 
-import Foundation
 import WebKit
 
 protocol WebViewMessageHandlerDelegate: class {
-    func didReceive(message name: String, body: [String: Any])
+    func webViewMessageHandler(_ webViewMessageHandler: WebViewMessageHandler, didReceiveEventWithName name: String, body: [String: Any])
 }
 
 class WebViewMessageHandler: NSObject, WKScriptMessageHandler {
     let name = "iosCallbackHandler"
-    
+
     weak var delegate: WebViewMessageHandlerDelegate?
-    
+
+    /**
+        **WARNING**
+        Post messages must contain event_type.
+     */
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.name == name else { return }
+
         guard
-            message.name == self.name,
-            let body = message.body as? [String : Any],
+            let body = message.body as? [String: Any],
             let eventName = body["event_type"] as? String
-        else { return }
-        
-        delegate?.didReceive(message: eventName, body: body)
+        else {
+            assertionFailure("NO EVENT TYPE")
+            return
+        }
+
+        delegate?.webViewMessageHandler(self, didReceiveEventWithName: eventName, body: body)
     }
 }
-

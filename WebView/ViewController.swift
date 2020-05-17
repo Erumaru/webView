@@ -31,20 +31,14 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: WebViewDelegate {
-    func onBackPressed(webView: WebView) {
-        print("back")
-    }
-    
-    func didReceive(webView: WebView, event: WebViewEvent, with body: [String : Any]) {
-        print("\(event.rawValue) \(body)")
+    func webView(_ webView: WebView, didReceiveEvent event: WebViewEvent, withBody body: WebViewEventBody) {
         switch event {
-        default: break
-        }
-    }
-    
-    func shouldAuthorize(webView: WebView) {
-        webView.addCookies(["token" : "token"]) {
-            print("done")
+        case .filter:
+            guard let body = body as? FilterEventBody else { return }
+            
+            print(body.open)
+        default:
+            break
         }
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		57F2D4C7247178F200D3AB01 /* WebViewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F2D4C6247178F200D3AB01 /* WebViewEvent.swift */; };
 		E5DD0D6BB99A560EEFBA5A50 /* Pods_WebView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8D8A9E69B792FB8A3420E3 /* Pods_WebView.framework */; };
 		F477B1B22464A7FA00EE82C3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F477B1B12464A7FA00EE82C3 /* AppDelegate.swift */; };
 		F477B1B42464A7FA00EE82C3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F477B1B32464A7FA00EE82C3 /* SceneDelegate.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		57F2D4C6247178F200D3AB01 /* WebViewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewEvent.swift; sourceTree = "<group>"; };
 		593614484029F4026E285D87 /* Pods-WebView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebView.release.xcconfig"; path = "Target Support Files/Pods-WebView/Pods-WebView.release.xcconfig"; sourceTree = "<group>"; };
 		B9702C35A6DE9E991BE2D042 /* Pods-WebView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebView.debug.xcconfig"; path = "Target Support Files/Pods-WebView/Pods-WebView.debug.xcconfig"; sourceTree = "<group>"; };
 		DE8D8A9E69B792FB8A3420E3 /* Pods_WebView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,6 +95,7 @@
 				F477B1BF2464A7FC00EE82C3 /* Info.plist */,
 				F477B1C72469CCE600EE82C3 /* WebView.swift */,
 				F477B1CA2469D26200EE82C3 /* WebViewMessageHandler.swift */,
+				57F2D4C6247178F200D3AB01 /* WebViewEvent.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				F477B1C92469CEA600EE82C3 /* WebView.swift in Sources */,
 				F477B1B22464A7FA00EE82C3 /* AppDelegate.swift in Sources */,
 				F477B1B42464A7FA00EE82C3 /* SceneDelegate.swift in Sources */,
+				57F2D4C7247178F200D3AB01 /* WebViewEvent.swift in Sources */,
 				F477B1CB2469D26200EE82C3 /* WebViewMessageHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
